@@ -11,6 +11,9 @@ export const AJUSTES_POR_DEFECTO = Object.freeze({
     config: 'arnes-ia/stacks/express/.dependency-cruiser.cjs',
     // Lista de violaciones heredadas (`depcruise … --output-type baseline`); null si no hay
     conocidas: null,
+    // Expresiones regulares de lo que es acceso a datos (regla controller-sin-orm); null = Prisma.
+    // La lee .dependency-cruiser.cjs; aquí solo se valida.
+    accesoDatos: null,
   },
   pruebas: {
     // Carpeta desde la que corre Vitest y sus argumentos
@@ -39,6 +42,10 @@ export function combinarAjustes(texto) {
   const { rutas } = ajustes.dependencias;
   if (!Array.isArray(rutas) || rutas.length === 0 || !rutas.every((r) => typeof r === 'string')) {
     throw new Error(`${ARCHIVO_AJUSTES}: dependencias.rutas debe ser una lista de carpetas.`);
+  }
+  const { accesoDatos } = ajustes.dependencias;
+  if (accesoDatos !== null && (!Array.isArray(accesoDatos) || accesoDatos.length === 0)) {
+    throw new Error(`${ARCHIVO_AJUSTES}: dependencias.accesoDatos debe ser una lista o null.`);
   }
   if (!Array.isArray(ajustes.pruebas.args)) {
     throw new Error(`${ARCHIVO_AJUSTES}: pruebas.args debe ser una lista.`);

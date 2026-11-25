@@ -17,6 +17,7 @@ describe('ajustes del pre-commit', () => {
       rutas: ['backend/src'],
       config: AJUSTES_POR_DEFECTO.dependencias.config,
       conocidas: 'backend/conocidas.json',
+      accesoDatos: null,
     });
     expect(ajustes.pruebas).toEqual({ cwd: 'backend', args: ['run'] });
   });
@@ -26,5 +27,6 @@ describe('ajustes del pre-commit', () => {
     expect(() => combinarAjustes('[]')).toThrow('debe ser un objeto');
     expect(() => combinarAjustes('{"dependencias":{"rutas":[]}}')).toThrow('dependencias.rutas');
     expect(() => combinarAjustes('{"pruebas":{"args":"run"}}')).toThrow('pruebas.args');
+    expect(() => combinarAjustes('{"dependencias":{"accesoDatos":[]}}')).toThrow('accesoDatos');
   });
 });

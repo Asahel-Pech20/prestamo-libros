@@ -24,7 +24,8 @@ export default tseslint.config(
     },
   },
   {
-    // Los controllers y routes no importan el ORM (también lo revisa dependency-cruiser)
+    // Los controllers y routes no importan el acceso a datos (también lo revisa dependency-cruiser).
+    // Aquí es el almacén en memoria: el mismo patrón que dependencias.accesoDatos en arnes.config.json.
     files: ['**/*.controller.ts', '**/*.routes.ts'],
     rules: {
       'no-restricted-imports': [
@@ -32,13 +33,19 @@ export default tseslint.config(
         {
           patterns: [
             {
-              group: ['**/generated/**', '@prisma/*', '**/lib/prisma'],
+              group: ['**/lib/almacen*'],
               message: 'El acceso a datos va en el service.',
             },
           ],
         },
       ],
     },
+  },
+  {
+    // Archivos de configuración en CommonJS (p. ej. .dependency-cruiser.cjs)
+    files: ['**/*.cjs'],
+    languageOptions: { sourceType: 'commonjs' },
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
   {
     // Los hooks del arnés son scripts de consola: sí imprimen

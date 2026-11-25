@@ -2,7 +2,8 @@
   "dependencias": {
     "rutas": ["src"],
     "config": "arnes-ia/stacks/express/.dependency-cruiser.cjs",
-    "conocidas": null
+    "conocidas": null,
+    "accesoDatos": ["(^|/)lib/almacen"]
   },
   "pruebas": {
     "cwd": ".",
