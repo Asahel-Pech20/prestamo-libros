@@ -1,6 +1,6 @@
-# ARCHITECTURE.md — <Nombre del proyecto>
+# ARCHITECTURE.md — Préstamo de libros
 
-> Plantilla del arnés. Reemplaza lo que está entre `< >`. Mantén el diagrama al día: si cambias una capa, cambia este archivo en el mismo PR.
+> Hecho con la plantilla del arnés 0.4.0. Si cambias una capa, cambia este archivo en el mismo commit.
 
 ## 1. Vista general
 
@@ -14,25 +14,25 @@ flowchart LR
     M --> C[controller]
     C --> S[service]
     S --> D[dominio<br/>funciones puras]
-    S --> P[(ORM / repositorio)]
+    S --> P[(lib/almacen.ts<br/>datos en memoria)]
   end
-  P --> BD[(Base de datos)]
   V -->|JSON| R
 ```
 
-**Regla de dependencias** (la hace cumplir `.dependency-cruiser.cjs`): cada capa solo depende de la de su derecha. `dominio/` no depende de nada del framework ni de la BD.
+**Regla de dependencias** (la hace cumplir `arnes-ia/stacks/express/.dependency-cruiser.cjs`; el acceso a datos es `lib/almacen`, declarado en `arnes.config.json`): cada capa solo depende de la de su derecha. `dominio/` no depende de nada del framework ni de la BD.
 
 ## 2. Estructura de carpetas
 
 ```
-<raíz>/
+prestamo-libros/
 ├── AGENTS.md  CLAUDE.md  ARCHITECTURE.md  README.md
+├── arnes.config.json  arnes-ia/
 ├── docs/  requerimientos.md  PROYECTO.md  bitacora-ia.md  adr/
 ├── src/
 │   ├── app.ts  server.ts
 │   ├── config/        variables de entorno, permisos
 │   ├── middlewares/   auth, autorizar, validar, errores
-│   ├── lib/           cliente del ORM, paginación, utilidades sin dominio
+│   ├── lib/           almacén en memoria, reloj, paginación, AppError
 │   └── modules/<modulo>/
 │       ├── <modulo>.routes.ts
 │       ├── <modulo>.controller.ts
@@ -40,14 +40,16 @@ flowchart LR
 │       ├── <modulo>.schemas.ts
 │       ├── dominio/   reglas puras (cálculos, validaciones de negocio)
 │       └── <modulo>.test.ts
-└── prisma/  schema.prisma  migrations/  seed.ts
 ```
+
+Este proyecto no usa base de datos: `src/lib/almacen.ts` guarda los datos en memoria y `src/lib/reloj.ts` da la hora (fijable en las pruebas).
 
 ## 3. Módulos
 
 | Módulo | Responsable | Requerimientos | Depende de |
 |---|---|---|---|
-| <modulo> | <integrante> | RF-xx–RF-yy | <otro módulo vía su service> |
+| `libros` | Santiago Pech | RF-01, RF-02 | — |
+| `prestamos` (`dominio/prestamo.ts`) | Santiago Pech | RF-03–RF-06, RN-01–RN-06 | `libros` (vía `librosService`) |
 
 ## 4. Decisiones
 
